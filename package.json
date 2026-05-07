@@ -1,0 +1,26 @@
+{
+  "name": "gcp-pubsub-learning",
+  "version": "1.0.0",
+  "description": "Minimal TypeScript Express project for learning Google Cloud Pub/Sub push subscriptions.",
+  "type": "module",
+  "main": "dist/publisher.js",
+  "scripts": {
+    "dev:publisher": "tsx src/publisher.ts",
+    "dev:worker": "tsx src/worker.ts",
+    "build": "tsc",
+    "start": "node dist/worker.js",
+    "start:publisher": "node dist/publisher.js",
+    "start:worker": "node dist/worker.js"
+  },
+  "dependencies": {
+    "@google-cloud/pubsub": "^5.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.10.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
