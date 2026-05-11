@@ -130,6 +130,28 @@ To simulate a slow worker without accidentally creating a retry loop, use a smal
 WORKER_DELAY_MS=3000 npm run dev:worker
 ```
 
+To make the worker process one message at a time for learning, set `WORKER_CONCURRENCY=1`:
+
+```bash
+WORKER_DELAY_MS=3000 WORKER_CONCURRENCY=1 npm run dev:worker
+```
+
+You should see logs like:
+
+```text
+Worker slot acquired. Active: 1/1, queued: 0
+Worker concurrency limit reached. Waiting queue: 1
+Worker slot released. Active: 0/1, queued: 1
+```
+
+For this demo, publish only a few messages or increase the ack deadline. If many push requests wait too long, Pub/Sub can retry them.
+
+```bash
+gcloud pubsub subscriptions update chat-events-sub \
+  --ack-deadline=60 \
+  --project=pubsub-learning-123456
+```
+
 Then publish several messages from another terminal:
 
 ```bash

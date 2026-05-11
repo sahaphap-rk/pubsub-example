@@ -5,7 +5,7 @@ import { PubSub } from "@google-cloud/pubsub";
 
 const projectId = process.env.PROJECT_ID ?? "pubsub-learning-123456";
 const topicName = process.env.TOPIC_NAME ?? "chat-events";
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(process.env.PUB_PORT ?? process.env.PORT ?? 3000);
 
 const app = express();
 const pubSubClient = new PubSub({ projectId });

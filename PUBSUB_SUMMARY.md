@@ -105,6 +105,7 @@ TOPIC_NAME=chat-events
 SUBSCRIPTION_NAME=chat-events-sub
 PORT=3000
 WORKER_DELAY_MS=0
+WORKER_CONCURRENCY=100
 FAIL_ON_MESSAGE=
 ```
 
@@ -115,6 +116,12 @@ WORKER_DELAY_MS=3000
 ```
 
 ใช้จำลอง worker ทำงานช้า
+
+```text
+WORKER_CONCURRENCY=1
+```
+
+ใช้จำลองให้ worker ทำทีละงาน จะเห็นคิวรอชัดขึ้น
 
 ```text
 FAIL_ON_MESSAGE=fail
@@ -342,10 +349,34 @@ Worker ค่อย process message ทีหลัง
 WORKER_DELAY_MS=3000 npm run dev:worker
 ```
 
+ถ้าอยากเห็น worker ทำทีละงาน ให้จำกัด concurrency เป็น `1`:
+
+```bash
+WORKER_DELAY_MS=3000 WORKER_CONCURRENCY=1 npm run dev:worker
+```
+
+สิ่งที่ควรเห็นใน log:
+
+```text
+Worker slot acquired. Active: 1/1, queued: 0
+Worker concurrency limit reached. Waiting queue: 1
+Worker slot released. Active: 0/1, queued: 1
+```
+
+คำเตือน: ถ้าจำกัดเป็นทีละงานแล้ว delay นาน อย่ายิงเยอะเกินไป เพราะ push request ที่รอนานกว่า ack deadline อาจถูก retry ได้
+
+เพิ่ม ack deadline สำหรับ demo ได้:
+
+```bash
+gcloud pubsub subscriptions update chat-events-sub \
+  --ack-deadline=60 \
+  --project=pubsub-learning-495503
+```
+
 ยิงหลาย message:
 
 ```bash
-for i in {1..10}; do
+for i in {1..5}; do
   curl -s -X POST http://localhost:3001/publish \
     -H "Content-Type: application/json" \
     -d "{\"userId\":\"user-1\",\"message\":\"slow worker test $i\"}" &
